@@ -1,53 +1,36 @@
 package main
 
-import (
-	"fmt"
-)
-
-func readAndWrite(ch <-chan int, ch2 chan<- int) {
-	for {
-		select {
-		case value, ok := <-ch:
-			if !ok {
-				return
-			}
-			fmt.Println(value)
-			ch2 <- value * 2
-		}
-	}
-}
-
 /*func main() {
-	sl := [100]int{}
+	// Создаем каналы для передачи данных
+	inputChan := make(chan int)
+	outputChan := make(chan int)
+	//создаем массив
+	numbers := [100]int{}
+	//заполняем массив
 	for i := 0; i < 100; i++ {
-		sl[i] = i
+		numbers[i] = i
 	}
 
-	ch := make(chan int, 5)
-	ch2 := make(chan int, 5)
-	wg := &sync.WaitGroup{}
-
-	wg.Add(1)
+	// Горутина для записи чисел в первый канал
 	go func() {
-		defer wg.Done()
-		readAndWrite(ch, ch2)
-	}()
-
-	go func() {
-		for val, _ := range sl {
-			ch <- val
+		for _, num := range numbers {
+			inputChan <- num
 		}
-		close(ch)
+		//закрываем канал после записи
+		close(inputChan)
 	}()
 
+	// Горутина для умножения чисел на 2 и записи в outputChan
 	go func() {
-		wg.Wait()
-		close(ch2)
+		for num := range inputChan {
+			outputChan <- num * 2
+		}
+		//закрываем канал
+		close(outputChan)
 	}()
 
-	for value := range ch2 {
-		fmt.Println(value)
-		_ = value
+	// Вывод результата
+	for result := range outputChan {
+		fmt.Println(result)
 	}
-
 }*/

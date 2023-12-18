@@ -35,33 +35,73 @@ func secondMethode(ch chan bool, wg *sync.WaitGroup) {
 	}
 }
 
-/*func main() {
-	ch := make(chan bool)   // создали небуферизированный канал для передачи сигнала
-	wg := &sync.WaitGroup{} //создаем WaitGroup для синхронизации
-	wg.Add(1)
-	go secondMethode(ch, wg)
-	time.Sleep(time.Second * 3)
-	ch <- true
-
-	ctx, cancel := context.WithCancel(context.Background())
-	wg.Add(1)
-	go firstMethode(ctx, wg)
-	time.Sleep(time.Second * 3)
-	cancel()
-
-	wg.Wait()
-}*/
-
-func someAction(v []int8, b int8) {
-	fmt.Println(v)
-	v[0] = 100
-	fmt.Println(v)
-	v = append(v, b)
-	fmt.Println(v)
+func thirdMethode(wg *sync.WaitGroup, mutex sync.RWMutex) {
+	//уменьшаем счетчик
+	defer wg.Done()
+	//запускаем бесконечный цикл
+	for {
+		//будем делать RLock потому что мы здесь читаем значение stopped, если нужно менять нужен Lock
+		mutex.RLock()
+		//флаг остановки тру тогда завершаем горутину
+		if stopped {
+			//прочли значение stopped делаем  RUnlock
+			mutex.RUnlock()
+			// выходим из горутины
+			fmt.Println("goroutine stopped thirdMethode")
+			return
+		}
+		//прочли значение stopped делаем  RUnlock
+		mutex.RUnlock()
+		fmt.Println("goroutine work thirdMethode")
+		time.Sleep(time.Millisecond * 1)
+	}
 }
 
+func stopGoroutine3Methode() {
+	stopped = true
+}
+
+var stopped bool
+
 /*func main() {
-	var a = []int8{1, 2, 3, 4, 5}
-	someAction(a, 6)
-	fmt.Println(a)
+	//создаем WaitGroup для синхронизации
+	wg := &sync.WaitGroup{}
+	//в первом способе использован контекст
+	//создаем контекст который отменим
+	ctx, cancel := context.WithCancel(context.Background())
+	//увеличиваем счетчик
+	wg.Add(1)
+	//запускам горутину
+	go firstMethode(ctx, wg)
+	//спим секунду
+	time.Sleep(time.Second * 1)
+	//отменяем контекст этим выполняем останов горутины
+	cancel()
+
+	//во втором способе использован канал для передачи сигнала останова
+	//создали канал для передачи сигнала останова
+	ch := make(chan bool)
+	//увеличиваем счетчик
+	wg.Add(1)
+	//запускаем горутину
+	go secondMethode(ch, wg)
+	//спим секунду
+	time.Sleep(time.Second * 1)
+	//отправляем true в канал и останавливаем горутину
+	ch <- true
+
+	//третий способ использует mutex и булевый глобальный флаг
+	//создаем mutex для блокировки при чтении
+	mutex := sync.RWMutex{}
+	//увеличиваем счетчик
+	wg.Add(1)
+	//запускаем горутину
+	go thirdMethode(wg, mutex)
+	//спим секунду
+	time.Sleep(time.Second * 1)
+	// устанавливаем флаг остановки
+	stopGoroutine3Methode()
+
+	//ждем завершения работы горутин
+	wg.Wait()
 }*/

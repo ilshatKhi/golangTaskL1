@@ -4,14 +4,17 @@ import (
 	"math"
 )
 
+// структура точки
 type Point struct {
 	x, y float64
 }
 
+// функция создания новой точки
 func NewPoint(x, y float64) Point {
 	return Point{x, y}
 }
 
+// Считаем расстояние от одной точки до другой
 func distance(p1, p2 Point) float64 {
 	return math.Sqrt(math.Pow(p2.x-p1.x, 2) + math.Pow(p2.y-p1.y, 2))
 }

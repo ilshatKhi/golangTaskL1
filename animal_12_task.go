@@ -1,15 +1,19 @@
 package main
 
 func setFromarray(sl []string) []string {
-	m := make(map[string]string)
+	//создаем мапу
+	set := make(map[string]string)
+	//проходимся по массиву
 	for _, val := range sl {
-		m[val] = val
+		set[val] = val
 	}
-	var newsl []string
-	for k := range m {
-		newsl = append(newsl, k)
+	//создали слайс для результата
+	var result []string
+	//заполнили слайс result
+	for k := range set {
+		result = append(result, k)
 	}
-	return newsl
+	return result
 }
 
 /*func main() {

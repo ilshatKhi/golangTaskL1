@@ -6,24 +6,22 @@ import (
 )
 
 func sumConc(sl []int) {
-	var wg sync.WaitGroup
-	var mu sync.Mutex
+	var wg sync.WaitGroup // создаем waitgroup
+	var mu sync.Mutex     // создаем mutex, чтоб блокироваться при записи
 	sum := 0
-	//fmt.Println(sl)
-	for _, num := range sl {
-		wg.Add(1)
+	for _, num := range sl { // в цикле запускаем горутины
+		wg.Add(1) // увеличиваем счетчик waitgroup
 		go func(num int) {
-			defer wg.Done()
-			mu.Lock()
-			sum += num * num
-			mu.Unlock()
-		}(num)
+			defer wg.Done()  //уменьшаем
+			mu.Lock()        // блокируемся, для того чтобы только 1 горутина одномоментно имела доступ к переменной sum
+			sum += num * num // суммируем
+			mu.Unlock()      //разблокируемся
+		}(num) // передаем число в параметрах
 	}
-	wg.Wait()
+	wg.Wait() //ожидаем завершения работы горутин
 	fmt.Println(sum)
 }
 
-/*
-func main() {
+/*func main() {
 	sumConc([]int{2, 4, 6, 8, 10})
 }*/

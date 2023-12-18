@@ -8,45 +8,52 @@ import (
 )
 
 func ctxWithDeadLine() {
-	wg := &sync.WaitGroup{}
+	//создаем канал для записи данных
 	ch := make(chan int, 5)
+	//создаем контекст с дедлайном
 	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*3))
 	defer cancel()
-
+	//создаем waitgroup
+	wg := &sync.WaitGroup{}
+	//увеличили счетчик waitgroup
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		work(ctx, ch)
-	}()
+	//запускаем work
+	go work(ctx, ch, wg)
+	//запускаем пишущую горутину
 	go func() {
 		defer close(ch)
 		i := 0
-	loop:
 		for {
 			select {
-			case <-ctx.Done():
-				fmt.Println("case <-ctx.Done():")
-				break loop
+			case <-ctx.Done(): // отслеживаем контекст
+				fmt.Println("<-ctx.Done():")
+				return // выходим из горутины
 			default:
+				//пишем в канал
 				ch <- i
+				i++
+				//моделируем полезную работу
 				time.Sleep(time.Millisecond * 1)
 			}
 		}
-
 	}()
-	wg.Wait()
+	wg.Wait() // ждем завершения выполнения горутин
 }
 
-func work(ctx context.Context, inputChanel <-chan int) {
+func work(ctx context.Context, inputChanel <-chan int, group *sync.WaitGroup) {
 	for {
 		select {
+		// если пришел Done - выходим
 		case <-ctx.Done():
+			//уменьшаем счетчик
+			group.Done()
 			fmt.Println("ctx.Done()")
 			return
 		default:
-
+			//читаем и выводим то, что пришло в канал
+			fmt.Println(<-inputChanel)
 		}
-		fmt.Println(<-inputChanel)
+
 	}
 }
 

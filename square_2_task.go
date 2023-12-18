@@ -1,10 +1,19 @@
 package main
 
-import "fmt"
-import "math"
+/*func main() {
+	numbers := []int{2, 4, 6, 8, 10} // объявили и инициализировали слайс
 
-func printSquare(mas []int) {
-	for _, num := range mas {
-		fmt.Println(math.Pow(float64(num), 2))
+	wg := &sync.WaitGroup{} // создаем waitgroup для синхронизации работы горутин
+
+	for _, num := range numbers { // запускаем цикл по слайсу
+		wg.Add(1)        // увеличиваем счетчик на 1
+		go func(n int) { // запускаем горутину для подсчета квадрата
+			square := n * n
+			fmt.Printf("Квадрат числа %d равен %d\n", n, square)
+			wg.Done() // уменьшаем на 1 счетчик waitgroup
+		}(num) // надо передавать число как параметр, только тогда мы будем уверены, что все числа попадут в горутину
 	}
+
+	wg.Wait() // здесь мы блокируемся и ждем завершения работы горутин
 }
+*/

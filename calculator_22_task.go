@@ -6,7 +6,6 @@ import (
 
 /*
 здесь использован пакет big  чтобы можно было умножать числа больше чем 2^20
-можно было использовать float, но там есть ошибка округления
 */
 func multiply(a string, b string) *big.Int {
 	result := new(big.Int) //

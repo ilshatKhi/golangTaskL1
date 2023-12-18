@@ -5,15 +5,17 @@ import "fmt"
 var justString string
 
 func createHugeString(n int) string {
-	return "asdkalksnflansdlfknaslkdnflaksndflaksndflkasndflknasldfknaslkjjkljkljkljkljkljkljkljkljkljklljkkkdfn"
+	return "asdkalk2snasdkalk2snasdkalk2snasdkalk2snasdkalk2snasdkalk2snasdkalk2snasdkalk2snasdkalk2snasdkalk2snooo"
 }
 
 func someFunc() {
+	// тут добавил проверку на длину, если длины не хватит то получаем out of range
 	v := createHugeString(1 << 10)
-	if len(v) >= 100 {
+	//длину проверяем
+	if len([]rune(v)) >= 100 {
 		justString = v[:100]
 	} else {
-		fmt.Println("v is short")
+		fmt.Println("string is short")
 		justString = ""
 	}
 
